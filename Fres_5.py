@@ -39,16 +39,10 @@ index_n = np.arange(n.size)
 np.put(n,index_n,filler)
 
 # we want k to vary between 0 and 3 with a step of 0.1
-# =============================================================================
-# k = np.empty((steps))
-# index_k = np.arange(k.size)
-# np.put(k,index_k,filler)
-# =============================================================================
+k = np.empty((steps))
+index_k = np.arange(k.size)
+np.put(k,index_k,filler)
 
-k = zeros(len(n))
-
-
-import numpy as np
 n = np.array(n)
 k = np.array(k).reshape((-1, 1))
 n_com = n + k.repeat(len(n), 1) * 1j
@@ -76,7 +70,8 @@ beta = ((2*np.pi)/lamda)*n_com*d*cos_theta1
 
 z = 0 + 1j
 
-block = np.exp(-2*z*beta)
+block = np.exp(2*z*beta)
+# double check whether this is e^+ or e^- 
 
 # not sure if this is defo doing what we hope
 # but it is cycling through the set because we do have
@@ -119,6 +114,9 @@ import matplotlib.pyplot as plt
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_wireframe(n,k,T, rstride=2, cstride=2)
+ax.set_ylabel('k')
+ax.set_xlabel('n')
+ax.set_title('Transmisson')
 
 plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_T.jpg')
 
@@ -129,6 +127,7 @@ ax = fig.add_subplot(111, projection='3d')
 ax.plot_wireframe(n,k,R, rstride=2, cstride=2)
 ax.set_ylabel('k')
 ax.set_xlabel('n')
+ax.set_title('Reflection') 
 
 plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_R.jpg')
 
@@ -139,5 +138,6 @@ ax = fig.add_subplot(111, projection='3d')
 ax.plot_wireframe(n,k,A, rstride=2, cstride=2)
 ax.set_ylabel('k')
 ax.set_xlabel('n')
+ax.set_title('Absorption')
 
 plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_A.jpg')
