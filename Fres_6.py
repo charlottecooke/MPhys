@@ -1,7 +1,6 @@
 from numpy import cos, inf, zeros, array, exp, conj, nan, isnan, pi, sin
 
 import numpy as np
-import scipy as sp
 import time
 
 start_time = time.time()
@@ -15,20 +14,9 @@ cos_theta2 = 1
 n_0 = 1
 # for air the refractive index is ~1
 
-# refractive index of ITO glass
-n_2 = 1.902
+# refractive index of Cu 
+n_2 = 0.637
 
-# code below can be used to choose between a substrate of Copper or Glass
-# material = str(input("Is the substrate Copper or Glass? "))
-#
-# if material == "Copper":
-#     n_2 = 0.637
-# elif material == "Glass":
-#     n_2 = 1.902
-# else:
-#     print("invalid input")
-#     exit()
-# choose between Cu or ITO glass refractive indecies
 print(n_2)
 
 # we want n to vary between 0 and 3 with a step of 0.1
@@ -38,11 +26,11 @@ filler = np.arange(0,3.1,0.1)
 index_n = np.arange(n.size)
 np.put(n,index_n,filler)
 
+# we want k to vary between 0 and 3 with a step of 0.1
 k = np.empty((steps))
 index_k = np.arange(k.size)
 np.put(k,index_k,filler)
 
-import numpy as np
 n = np.array(n)
 k = np.array(k).reshape((-1, 1))
 n_com = n + k.repeat(len(n), 1) * 1j
@@ -71,6 +59,7 @@ beta = ((2*np.pi)/lamda)*n_com*d*cos_theta1
 z = 0 + 1j
 
 block = np.exp(2*z*beta)
+# double check whether this is e^+ or e^-
 
 # not sure if this is defo doing what we hope
 # but it is cycling through the set because we do have
@@ -107,31 +96,32 @@ A = 1 - T - R
 
 print ( "time 3", time.time() - start_time)
 
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly
+# imports for Plotly
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,T, rstride=2, cstride=2)
+plotly.tools.set_credentials_file(username='luka.j.v', api_key='K1pamGZFvMc64DABuoro')
+# username and api_key to host Plotly plots in my account
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_T.jpg')
+print ( "time 4", time.time() - start_time)
 
-plt.clf()
+# Contour plot of Absorption data for Copper
+contour = [
+    go.Contour(
+        z=A,
+        x=n,
+        y=k,
+        colorscale = [[0, 'rgb(255, 145, 97)'], [1, 'rgb(116, 11, 124)']]
+        )
+]
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,R, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
+contour_layout = go.Layout(
+    title='Cu Absorption Contour Plot',
+    height = 800,
+    width = 800,
+)
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_R.jpg')
+fig = go.Figure(data = contour, layout = contour_layout)
 
-plt.clf()
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,A, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
-
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_A.jpg')
+py.iplot(fig, filename='Cu Absorption Contour')

@@ -1,7 +1,6 @@
 from numpy import cos, inf, zeros, array, exp, conj, nan, isnan, pi, sin
 
 import numpy as np
-import scipy as sp
 import time
 
 start_time = time.time()
@@ -71,7 +70,7 @@ beta = ((2*np.pi)/lamda)*n_com*d*cos_theta1
 z = 0 + 1j
 
 block = np.exp(2*z*beta)
-# double check whether this is e^+ or e^- 
+# double check whether this is e^+ or e^-
 
 # not sure if this is defo doing what we hope
 # but it is cycling through the set because we do have
@@ -108,36 +107,134 @@ A = 1 - T - R
 
 print ( "time 3", time.time() - start_time)
 
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly
+# imports for Plotly
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,T, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
-ax.set_title('Transmisson')
+plotly.tools.set_credentials_file(username='luka.j.v', api_key='K1pamGZFvMc64DABuoro')
+# username and api_key to host Plotly plots in my account
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_T.jpg')
+print ( "time 4", time.time() - start_time)
 
-plt.clf()
+# 3D Wireframe graph of Absorption data
+surface = go.Surface(x=n, y=k, z=A)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,R, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
-ax.set_title('Reflection') 
+data = [surface]
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_R.jpg')
+layout = go.Layout(
+    title='ITO Glass Absoprtion',
+    scene=dict(
+        xaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        yaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        zaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        )
+    )
+)
 
-plt.clf()
+fig = go.Figure(data=data, layout=layout)
+py.iplot(fig, filename='ITO Glass Absoprtion')
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,A, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
-ax.set_title('Absorption')
+print ( "time 5", time.time() - start_time)
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_A.jpg')
+# 3D Wireframe graph of Transmission data
+surface = go.Surface(x=n, y=k, z=T)
+
+data = [surface]
+
+layout = go.Layout(
+    title='ITO Glass Transmission',
+    scene=dict(
+        xaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        yaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        zaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        )
+    )
+)
+
+fig = go.Figure(data=data, layout=layout)
+py.iplot(fig, filename='ITO Glass Transmission')
+
+print ( "time 6", time.time() - start_time)
+
+# 3D Wireframe graph of Reflection data
+surface = go.Surface(x=n, y=k, z=R, surfacecolor = [[0, 'rgb(	209, 255, 244)'], [1, 'rgb(255, 209, 220)']])
+
+data = [surface]
+
+layout = go.Layout(
+    title='ITO Glass Reflection',
+    scene=dict(
+        xaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        yaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        ),
+        zaxis=dict(
+            gridcolor='rgb(255, 209, 220)',
+            zerolinecolor='rgb(5, 9, 0)',
+            showbackground=True,
+            backgroundcolor='rgb(230, 230,230)'
+        )
+    )
+)
+
+fig = go.Figure(data=data, layout=layout)
+py.iplot(fig, filename='ITO Glass Reflection')
+
+print ( "time 7", time.time() - start_time)
+
+# Contour plot of Absorption data
+contour = [
+    go.Contour(
+        z=A,
+        x=n,
+        y=k,
+        colorscale = [[0, 'rgb(255, 145, 97)'], [1, 'rgb(116, 11, 124)']]
+        )
+]
+
+contour_layout = go.Layout(
+    title='ITO Glass Absorption Contour Plot λ=500nm',
+    height = 800,
+    width = 800,
+)
+
+fig = go.Figure(data = contour, layout = contour_layout)
+
+py.iplot(fig, filename='ITO Glass Absorption Contour λ=500nm')
