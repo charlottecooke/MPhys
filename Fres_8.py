@@ -1,7 +1,7 @@
 from numpy import cos, inf, zeros, array, exp, conj, nan, isnan, pi, sin
 
 import numpy as np
-import scipy as sp
+import pandas as pd
 import time
 
 start_time = time.time()
@@ -15,20 +15,9 @@ cos_theta2 = 1
 n_0 = 1
 # for air the refractive index is ~1
 
-# refractive index of ITO glass
-n_2 = 1.902
+# refractive index of Cu
+n_2 = 0.637
 
-# code below can be used to choose between a substrate of Copper or Glass
-# material = str(input("Is the substrate Copper or Glass? "))
-#
-# if material == "Copper":
-#     n_2 = 0.637
-# elif material == "Glass":
-#     n_2 = 1.902
-# else:
-#     print("invalid input")
-#     exit()
-# choose between Cu or ITO glass refractive indecies
 print(n_2)
 
 # we want n to vary between 0 and 3 with a step of 0.1
@@ -38,16 +27,15 @@ filler = np.arange(0,3.1,0.1)
 index_n = np.arange(n.size)
 np.put(n,index_n,filler)
 
+# we want k to vary between 0 and 3 with a step of 0.1
 k = np.empty((steps))
 index_k = np.arange(k.size)
 np.put(k,index_k,filler)
 
-import numpy as np
 n = np.array(n)
 k = np.array(k).reshape((-1, 1))
 n_com = n + k.repeat(len(n), 1) * 1j
 
-print (n_com)
 print ( "time", time.time() - start_time)
 
 r_01 = (cos_theta0 - n_com*cos_theta1)/(cos_theta0 + n_com*cos_theta1)
@@ -62,23 +50,25 @@ t_12 = (2*n_com*cos_theta1)/(n_com*cos_theta1 + n_2*cos_theta2)
 # print(r_12)
 # print(t_12)
 
-lamda = 500 # in units nm
+l = [300, 500, 700, 900, 1100, 1300, 1500, 1700] # in units nm
 d = 200  # in units nm
-beta = ((2*np.pi)/lamda)*n_com*d*cos_theta1
+# creating an empty array
+beta_mat = []
 
-# print("Beta is equal to {}".format(beta))
-
+for j in n_com:
+    temp = []
+    for q in range(0, len(l)):
+        beta = ((2*np.pi)/l[q])*n_com*d*cos_theta1
+        temp.append(beta)
+        #there are now 155 things in beta_mat (i.e. 31*5)
+beta_mat = np.array(temp)
+# this bit of code kinda works, but only give final value l=1000 nm
 z = 0 + 1j
 
-block = np.exp(2*z*beta)
 
-# not sure if this is defo doing what we hope
-# but it is cycling through the set because we do have
-# values at each "step"
-
-# n is what we are changing
-
-# should I be running over both i and j?
+block = np.exp(2*z*beta_mat)
+    # double check whether this is e^+ or e^-
+    # this is going to be 155 values long, sorry luka not a super neat array of arrays but will still work
 
 for i in r_01, r_12, block:
     for j in i:
@@ -105,33 +95,42 @@ T = n_2*np.power(ABS_T,2)
 
 A = 1 - T - R
 
+Weighted_Abs = [0.0280, 0.1950, 0.2026, 0.1674, 0.1343, 0.1099, 0.0918, 0.0711]
+
+for i in range(0,len(l)):
+    A_final = ( Weighted_Abs[i]* A[i])/ len(l)
+
+# this line should wieght the wavelengths with more photons more heavily.
+
+
 print ( "time 3", time.time() - start_time)
 
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly
+# imports for Plotly
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,T, rstride=2, cstride=2)
+plotly.tools.set_credentials_file(username='luka.j.v', api_key='K1pamGZFvMc64DABuoro')
+# username and api_key to host Plotly plots in my account
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_T.jpg')
+print ( "time 4", time.time() - start_time)
 
-plt.clf()
+# Contour plot of Absorption data for Copper
+contour = [
+    go.Contour(
+        z=A_final,
+        x=n,
+        y=k,
+        colorscale = [[0, 'rgb(255, 145, 97)'], [1, 'rgb(116, 11, 124)']]
+        )
+]
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,R, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
+contour_layout = go.Layout(
+    title='Cu Absorption Contour Plot (Weighted over Solar Spectrum)',
+    height = 800,
+    width = 800,
+)
 
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_R.jpg')
+fig = go.Figure(data = contour, layout = contour_layout)
 
-plt.clf()
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(n,k,A, rstride=2, cstride=2)
-ax.set_ylabel('k')
-ax.set_xlabel('n')
-
-plt.savefig('/Users/luka/Documents/University/MPhys/Theory/n&k_plot_A.jpg')
+py.iplot(fig, filename='Cu Absorption Contour (Weighted)')
