@@ -50,3 +50,5 @@ plt.plot(w,R)
 plt.xlabel('Photon Energy (eV)')
 plt.ylabel('Reflection')
 plt.grid(True)
+
+# yo 
