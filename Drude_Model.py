@@ -1,7 +1,7 @@
 from numpy import cos, inf, zeros, array, exp, conj, nan, isnan, pi, sin
 
 import numpy as np
-import pandas as pd
+import cmath
 import time
 
 # for sodium
@@ -26,6 +26,9 @@ filler = np.arange(0,10.1,0.1)
 index_w = np.arange(w.size)
 np.put(w,index_w,filler)
 
+w = w + 0j
+# make w complex
+
 plas_w = np.sqrt((n*e**2)/(eps_0*m))
 # plasmon frequency in units of s^-1
 
@@ -40,7 +43,7 @@ N = np.sqrt( 1 - (plas_w_eV**2/w**2))
 #         N= 0
 # complex refractive index (from Textbook)
 
-R = ((1-N)/(1+N))**2
+R = np.absolute((1-N)/(1+N)) **2
 # relfection coefficient
 
 import matplotlib.pyplot as plt
@@ -50,5 +53,3 @@ plt.plot(w,R)
 plt.xlabel('Photon Energy (eV)')
 plt.ylabel('Reflection')
 plt.grid(True)
-
-# yo 
