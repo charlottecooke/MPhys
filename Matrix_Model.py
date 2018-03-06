@@ -19,11 +19,13 @@ c = 3*10**8
 n = 2.54 * 10 ** 28
 # number density of electrons in m^-3
 
-steps = int(10/0.1) + 1
-w = np.empty((steps))
-filler = np.arange(0,10.1,0.1)
-index_w = np.arange(w.size)
-np.put(w,index_w,filler)
+# steps = int(10/0.1) + 1
+# w = np.empty((steps))
+# filler = np.arange(0,10.1,0.1)
+# index_w = np.arange(w.size)
+# np.put(w,index_w,filler)
+
+w = 8.7
 
 w = w + 0j
 # make w complex
@@ -47,4 +49,4 @@ k_0 = w/c
 d = 200
 # depth of layer in nm
 
-M = np.matrix( [cos(k_0 * N * d * cos_theta)   (-z/p)*sin(k_0 * N * d * cos_theta) ], [-zp*sin(k_0 * N * d * cos_theta) , cos(k_0 * N * z * cos_theta)] )
+M = np.matrix( [cos(k_0 * N * d * cos_theta)   (-z/p)*sin(k_0 * N * d * cos_theta) ], [-z*p*sin(k_0 * N * d * cos_theta) , cos(k_0 * N * z * cos_theta)] )
